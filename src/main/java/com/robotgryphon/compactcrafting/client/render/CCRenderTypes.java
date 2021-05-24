@@ -7,9 +7,14 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 
-public class CCRenderTypes {
+public abstract class CCRenderTypes extends RenderType {
+    // Dummy
+    protected CCRenderTypes(String name, VertexFormat fmt, int glMode, int size, boolean doCrumbling, boolean depthSorting, Runnable onEnable, Runnable onDisable) {
+        super(name, fmt, glMode, size, doCrumbling, depthSorting, onEnable, onDisable);
+    }
 
     /**
      * Sets up a transparency state based on original GL calls from Compact Machines. (1.12.x)
@@ -22,22 +27,24 @@ public class CCRenderTypes {
         RenderSystem.defaultBlendFunc();
     });
 
-    public static final RenderType PROJECTION_FIELD_RENDERTYPE = RenderType.create("projection_field",
+    public static final RenderType PROJECTION_FIELD = create("projection_field",
             DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256,
             RenderType.State.builder()
                     .setTransparencyState(PROJECTION_TRANSPARENCY)
-                    .setCullState(new RenderState.CullState(true))
-                    .setWriteMaskState(new RenderState.WriteMaskState(true, false))
+                    .setOutputState(RenderState.MAIN_TARGET)
+                    .setCullState(RenderState.NO_CULL) // Cull = field disappears when inside; No cull = field still renders when inside
+                    .setWriteMaskState(RenderState.COLOR_WRITE)
+                    .setDepthTestState(RenderState.LEQUAL_DEPTH_TEST) // Default, but let's make sure it stays that way
                     .createCompositeState(false));
 
-//    public static final RenderType FIELD_PROJECTION_ARC = create("projection_field_arc",
+//    public static final RenderType PROJECTION_FIELD_ARC = create("projection_field_arc",
 //            DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256,
 //            RenderType.State.builder()
 //                    .setTransparencyState(PROJECTION_TRANSPARENCY)
 //                    .setOutputState(RenderState.MAIN_TARGET)
 //                    .setCullState(RenderState.NO_CULL)
-//                    .setWriteMaskState(COLOR_WRITE)
-//                    .setDepthTestState(DepthTestState.LEQUAL_DEPTH_TEST) // Default, but let's make sure it stays that way
+//                    .setWriteMaskState(RenderState.COLOR_WRITE)
+//                    .setDepthTestState(RenderState.LEQUAL_DEPTH_TEST) // Default, but let's make sure it stays that way
 //                    .createCompositeState(false));
 //
 //    public static final RenderType MULTIBLOCK_GUI = create(CompactCrafting.MOD_ID + ":multiblock_gui",
@@ -47,8 +54,8 @@ public class CCRenderTypes {
 //                    .setOutputState(RenderState.MAIN_TARGET)
 //                    .setCullState(RenderState.CULL)
 //                    .setWriteMaskState(RenderState.COLOR_WRITE)
-//                    .setDiffuseLightingState(DiffuseLightingState.NO_DIFFUSE_LIGHTING)
-//                    .setDepthTestState(DepthTestState.LEQUAL_DEPTH_TEST)
+//                    .setDiffuseLightingState(RenderState.NO_DIFFUSE_LIGHTING)
+//                    .setDepthTestState(RenderState.LEQUAL_DEPTH_TEST)
 //                    .createCompositeState(false));
 
     public static IRenderTypeBuffer disableLighting(IRenderTypeBuffer.Impl in)

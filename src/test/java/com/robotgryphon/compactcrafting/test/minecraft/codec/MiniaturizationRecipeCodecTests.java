@@ -1,4 +1,4 @@
-package com.robotgryphon.compactcrafting.tests.minecraft.codecs;
+package com.robotgryphon.compactcrafting.test.minecraft.codec;
 
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
@@ -60,13 +60,13 @@ public class MiniaturizationRecipeCodecTests {
             }
 
             IRecipeLayer lay = topLayer.get();
-            int filledCount = lay.getNumberFilledPositions();
+            int filledCount = lay.getNumberFilledPositions(recipe.getRecipeComponents());
 
             // Layer only has one spot (redstone dust)
             Assertions.assertEquals(1, filledCount);
 
             // Top Layer should be a redstone dust, so one 'R' component
-            Map<String, Integer> componentTotals = lay.getComponentTotals();
+            Map<String, Integer> componentTotals = lay.getComponentTotals(recipe.getRecipeComponents());
             Assertions.assertTrue(componentTotals.containsKey("R"), "Expected redstone component in top layer; it does not exist.");
             Assertions.assertEquals(1, componentTotals.get("R"), "Expected one redstone required in top layer.");
         }
@@ -97,13 +97,13 @@ public class MiniaturizationRecipeCodecTests {
             }
 
             IRecipeLayer lay = topLayer.get();
-            int filledCount = lay.getNumberFilledPositions();
+            int filledCount = lay.getNumberFilledPositions(recipe.getRecipeComponents());
 
             // Layer only has one spot (redstone dust)
             Assertions.assertEquals(1, filledCount);
 
             // Top Layer should be a redstone dust, so one 'R' component
-            Map<String, Integer> componentTotals = lay.getComponentTotals();
+            Map<String, Integer> componentTotals = lay.getComponentTotals(recipe.getRecipeComponents());
             Assertions.assertTrue(componentTotals.containsKey("R"), "Expected redstone component in top layer; it does not exist.");
             Assertions.assertEquals(1, componentTotals.get("R"), "Expected one redstone required in top layer.");
         }
